@@ -49,6 +49,11 @@ public class JellyScript : MonoBehaviour
 
 
     // Start is called before the first frame update
+    public void AddMoney(int moneyw)
+    {
+        money += moneyw;
+        db.SaveData("money", money);
+    }
     public void ButtonClick()
     {
         GameObject jellyClone = Instantiate(jellyPrefab);
@@ -58,9 +63,7 @@ public class JellyScript : MonoBehaviour
         {
             jellyButton.GetComponent<Image>().sprite = goodJellyButton;
             jellysprite = goodS;
-            money = money + moneyAdd;
-            PlayerPrefs.SetInt("money", money);
-            db.SaveData("money", money);
+            AddMoney(moneyAdd);
             effect = effectPlus;
         }
         else
@@ -68,6 +71,7 @@ public class JellyScript : MonoBehaviour
             jellyButton.GetComponent<Image>().sprite = badJellyButton;
             jellysprite = badS;
             bc.copy--;
+            db.SaveData("money", money);
             bc.badCopyT.text = bc.copy.ToString();
             effect = effectN;
         }

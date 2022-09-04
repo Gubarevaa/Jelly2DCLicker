@@ -5,6 +5,7 @@ using Firebase.Database;
 using Firebase.Extensions;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 namespace DB
@@ -14,6 +15,7 @@ namespace DB
         private FirebaseAuth _auth;
         private FirebaseUser _user;
         private DatabaseReference _dbRef;
+        [SerializeField] Text userIDText;
         //[SerializeField] private Animator _notifyAnimator;
        // [SerializeField] private TMP_Text _textNotify;
         
@@ -42,11 +44,6 @@ namespace DB
                     // where app is a Firebase.FirebaseApp property of your application class.
                     var app = FirebaseApp.Create();
                     InitializeFirebase();
-                    if (_auth.CurrentUser != null)
-                    {
-                        SceneManager.LoadScene(1);
-                    }
-
                     // Set a flag here to indicate whether Firebase is ready to use by your app.
                 } else {
                     Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
@@ -55,52 +52,8 @@ namespace DB
             });
         
         }
-
-        public void RegData(string email, string password)
-        {
-            _auth.CreateUserWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
-                if (task.IsCanceled) {
-                    Debug.LogError("CreateUserWithEmailAndPasswordAsync was canceled.");
-                    return;
-                }
-                if (task.IsFaulted) {
-                    Debug.LogError("CreateUserWithEmailAndPasswordAsync encountered an error: " + task.Exception);
-                    return;
-                }
-                FirebaseUser newUser = task.Result;
-                Debug.LogFormat("Firebase user created successfully: {0} ({1})",
-                    newUser.DisplayName, newUser.UserId);
-            });
-        }
-
-        public void SignData(string email, string password)
-        {
-            if (_auth.CurrentUser == _user && _user != null)
-            {
-                SceneManager.LoadScene(1);
-                return;
-            }
-            _auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
-                if (task.IsCanceled)
-                {
-                    Debug.LogError("SignInWithEmailAndPasswordAsync was canceled.");
-                    return;
-                }
-                if (task.IsFaulted) {
-                    Debug.LogError("SignInWithEmailAndPasswordAsync encountered an error: " + task.Exception);
-                    return;
-                }
-
-                FirebaseUser newUser = task.Result;
-                Debug.LogFormat("User signed in successfully: {0} ({1})",
-                    newUser.DisplayName, newUser.UserId);
-                
-            });
-        }
-        
         void AuthStateChanged(object sender, System.EventArgs eventArgs)
         {
-            if (_auth.CurrentUser == _user) return;
             bool signedIn = _user != _auth.CurrentUser && _auth.CurrentUser != null;
             if (!signedIn && _user != null) {
                 Debug.Log("Signed out " + _user.UserId);
@@ -108,19 +61,17 @@ namespace DB
             _user = _auth.CurrentUser;
             if (signedIn)
             {
+                userIDText.text = _user.UserId;
                 Debug.Log("Signed in " + _user.UserId);
-             
-                // displayName = user.DisplayName ?? "";
-                // emailAddress = user.Email ?? "";
-                // photoUrl = user.PhotoUrl ?? "";
             }
         }
 
-        public void SaveData(string key, int money)
+        public void SaveData(string key, int value)
         {
             string userId = _auth.CurrentUser.UserId;
             //_dbRef.Child(key).Child(email).Child("money").SetValueAsync(money.ToString());
-            _dbRef.Child("users").Child(userId).SetValueAsync(money.ToString());
+            _dbRef.Child("users").Child(userId).Child(key).SetValueAsync(value.ToString());
+
         }
 
 
