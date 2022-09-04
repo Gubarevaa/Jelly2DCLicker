@@ -1,0 +1,12 @@
+fileFormatVersion: 2
+guid: 8244f8e51d0ea6043b8c55fd67860e70
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - jellyClone: {fileID: 3951738034134133450, guid: cb8eaedd04c14a74a955dcafc383d6ec, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
