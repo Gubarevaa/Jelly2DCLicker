@@ -43,6 +43,7 @@ public class JellyScript : MonoBehaviour
     public GameObject effectN;
     public GameObject effectPlus;
     public Sound s;
+    public Text idT;
 
     [SerializeField] private Database db;
 

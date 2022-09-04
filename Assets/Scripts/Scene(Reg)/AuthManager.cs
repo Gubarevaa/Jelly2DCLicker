@@ -3,6 +3,9 @@ using UnityEngine;
 using Firebase;
 using Firebase.Auth;
 using TMPro;
+using UnityEngine.SceneManagement;
+using static UnityEngine.UIElements.UxmlAttributeDescription;
+using Firebase.Database;
 
 public class AuthManager : MonoBehaviour
 {
@@ -11,6 +14,7 @@ public class AuthManager : MonoBehaviour
     public DependencyStatus dependencyStatus;
     public FirebaseAuth auth;
     public FirebaseUser User;
+    private DatabaseReference _dbRef;
 
     //Login variables
     [Header("Login")]
@@ -79,27 +83,25 @@ public class AuthManager : MonoBehaviour
             FirebaseException firebaseEx = LoginTask.Exception.GetBaseException() as FirebaseException;
             AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
 
-            string message = "Login Failed!";
+            string message = "Не удалось войти в систему!";
             switch (errorCode)
             {
                 case AuthError.MissingEmail:
-                    message = "Missing Email";
+                    message = "Отсутствует электронная почта";
                     break;
                 case AuthError.MissingPassword:
-                    message = "Missing Password";
+                    message = "Отсутствует пароль";
                     break;
                 case AuthError.WrongPassword:
-                    message = "Wrong Password";
+                    message = "Неправильный пароль";
                     break;
                 case AuthError.InvalidEmail:
-                    message = "Invalid Email";
+                    message = "Неверный адрес электронной почты";
                     break;
                 case AuthError.UserNotFound:
-                    message = "Account does not exist";
+                    message = "Пользователь не найден";
                     break;
             }
-            //это все равно круто. Тут мы просто вставим функцию которая будет посылать уведомления. 
-            // я не показала, тут есть уведомления. ПОгоди давай гит подкоючим. Мне скоро бежать ок
             warningLoginText.text = message;
         }
         else
@@ -109,7 +111,8 @@ public class AuthManager : MonoBehaviour
             User = LoginTask.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})", User.DisplayName, User.Email);
             warningLoginText.text = "";
-            confirmLoginText.text = "Logged In";
+            confirmLoginText.text = "Вход совершен успешно";
+            SceneManager.LoadScene(1);
         }
     }
 
@@ -118,12 +121,12 @@ public class AuthManager : MonoBehaviour
         if (_username == "")
         {
             //If the username field is blank show a warning
-            warningRegisterText.text = "Missing Username";
+            warningRegisterText.text = "Отсутствует имя пользователя";
         }
         else if (passwordRegisterField.text != passwordRegisterVerifyField.text)
         {
             //If the password does not match show a warning
-            warningRegisterText.text = "Password Does Not Match!";
+            warningRegisterText.text = "Пароль не совпадает!";
         }
         else
         {
@@ -139,20 +142,20 @@ public class AuthManager : MonoBehaviour
                 FirebaseException firebaseEx = RegisterTask.Exception.GetBaseException() as FirebaseException;
                 AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
 
-                string message = "Register Failed!";
+                string message = "Регистрация не удалась!";
                 switch (errorCode)
                 {
                     case AuthError.MissingEmail:
-                        message = "Missing Email";
+                        message = "Отсутствует электронная почта";
                         break;
                     case AuthError.MissingPassword:
-                        message = "Missing Password";
+                        message = "Отсутствует пароль";
                         break;
                     case AuthError.WeakPassword:
-                        message = "Weak Password";
+                        message = "Короткий пароль";
                         break;
                     case AuthError.EmailAlreadyInUse:
-                        message = "Email Already In Use";
+                        message = "Email адрес уже использован";
                         break;
                 }
                 warningRegisterText.text = message;
@@ -179,7 +182,7 @@ public class AuthManager : MonoBehaviour
                         Debug.LogWarning(message: $"Failed to register task with {ProfileTask.Exception}");
                         FirebaseException firebaseEx = ProfileTask.Exception.GetBaseException() as FirebaseException;
                         AuthError errorCode = (AuthError)firebaseEx.ErrorCode;
-                        warningRegisterText.text = "Username Set Failed!";
+                        warningRegisterText.text = "Установка имени пользователя не удалась!";
                     }
                     else
                     {
@@ -191,5 +194,11 @@ public class AuthManager : MonoBehaviour
                 }
             }
         }
+    }
+    public void SaveData(string key, int money)
+    {
+        string userId = auth.CurrentUser.UserId;
+        //_dbRef.Child(key).Child(email).Child("money").SetValueAsync(money.ToString());
+        _dbRef.Child("users").Child(userId).SetValueAsync(money.ToString());
     }
 }

@@ -7,10 +7,13 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 0
     path: 
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
+    guid: 00000000000000000000000000000000
+  - enabled: 0
     path: Assets/Scenes/Shop.unity
     guid: 97982b61bdadae44baf544b864bb6823
+  - enabled: 1
+    path: Assets/Scenes/Reg.unity
+    guid: 064ebaba286842840993f68cc3e77f0b
   - enabled: 1
     path: Assets/Scenes/JellyMoneyGame.unity
     guid: d3930da3c765236419b936c710473887
