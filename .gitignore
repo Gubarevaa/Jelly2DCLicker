@@ -65,3 +65,6 @@ crashlytics-build.properties
 /Assets/Editor Default Resources
 /Assets/ExternalDependencyManager
 /Assets/TextMesh Pro
+ProjectSettings/AndroidResolverDependencies.xml
+ProjectSettings/GvhProjectSettings.xml
+UserSettings/EditorUserSettings.asset
